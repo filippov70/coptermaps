@@ -12,27 +12,27 @@ var rigth = document.getElementById('rigth');
 
 var leftLayer;
 var rightLayer;
-
+var result;
 var map;
 
 $(document).ready(function () {
 
     config = {
-        layer01: {
-            label: 'Archsites',
-            name: 'sf:archsites'
-        },
+//        layer01: {
+//            label: 'States',
+//            name: 'topp:states'
+//        },
         layer02: {
-            label: 'Restricted',
-            name: 'sf:restricted'
+            label: 'Tasmania water bodies',
+            name: 'topp:tasmania_water_bodies'
         },
         layer03: {
-            label: 'Sfdem',
-            name: 'sf:sfdem'
+            label: 'Tasmania cities',
+            name: 'topp:tasmania_cities'
         },
         layer04: {
             label: 'Roads',
-            name: 'sf:roads'
+            name: 'topp:tasmania_roads'
         }
     };
 
@@ -75,9 +75,16 @@ $(document).ready(function () {
             })
         }),
         view: new ol.View({
-            center: ol.proj.fromLonLat([-95, 45]),
-            zoom: 6
+            center: ol.proj.fromLonLat([84, 55]),
+            zoom: 3
         })
+    });
+    
+    var url = serverUrl+'?request=GetCapabilities&service=WMS&version=1.1.1';
+    var parser = new ol.format.WMSCapabilities();
+    $.ajax(url, {crossDomain: true}).then(function (response) {
+        result = parser.read(response);
+        console.log(result);
     });
 
 });
@@ -91,13 +98,13 @@ function changeLeftLayer() {
         }
     }
 
-    leftLayer = left.value;
-    console.log(leftLayer);
+    leftName = left.value;
+
     var optionR = document.createElement('option');
     optionR.text = optionR.value = 'Выбрать снимок';
     rigth.add(optionR, 0);
     for (var item in config) {
-        if (config[item].label !== leftLayer) {
+        if (config[item].label !== leftName) {
             var optionR = document.createElement('option');
             optionR.text = optionR.value = config[item].label;
             rigth.add(optionR, 0);
@@ -117,8 +124,19 @@ function changeLeftLayer() {
             }
             map.addLayer(layer);
             leftLayer = layer;
-            var extent = layer.getExtent();
-            map.getView().fit(extent);
+
+            var Layers = result.Capability.Layer.Layer;
+            var extent;
+            for (var i = 0, len = Layers.length; i < len; i++) {
+                var layerobj = Layers[i];
+                if (layerobj.Name === config[item].name)
+                {
+                    extent = layerobj.BoundingBox[0].extent;
+                    console.log(extent);
+                }
+            }
+            var mExtent = ol.proj.transformExtent(extent, 'EPSG:4326', 'EPSG:3857');
+            map.getView().fit(mExtent);
         }
     }
 }
