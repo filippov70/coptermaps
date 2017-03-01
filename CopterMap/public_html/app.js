@@ -5,7 +5,7 @@
  */
 var config;
 var swipe;
-var serverUrl = 'http://78.108.89.204:8080/geoserver/wms';
+var serverUrl = 'http://77.222.54.87:8080/geoserver/wms';
 
 var left = document.getElementById('left');
 var rigth = document.getElementById('rigth');
@@ -23,16 +23,16 @@ $(document).ready(function () {
 //            name: 'topp:states'
 //        },
         layer02: {
-            label: 'Tasmania water bodies',
-            name: 'topp:tasmania_water_bodies'
+            label: '(AfterWeek)sun(7cm)',
+            name: 'test:(AfterWeek)sun(7cm)'
         },
         layer03: {
-            label: 'Tasmania cities',
-            name: 'topp:tasmania_cities'
+            label: 'RGB',
+            name: 'test:rgb'
         },
         layer04: {
-            label: 'Roads',
-            name: 'topp:tasmania_roads'
+            label: 'sun(7cm)',
+            name: 'test:sun(7cm)'
         }
     };
 
